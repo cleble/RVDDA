@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+  <html lang="en" data-ng-app="angular-client-side-auth">
+    <head>
+      <meta charset="utf-8" />
+      <title>Angular Auth Example</title>
+      <link rel="stylesheet" href="css/app.css" />
+      <link href="http://netdna.bootstrapcdn.com/bootstrap/3.0.3/css/bootstrap.min.css" rel="stylesheet" />
+      <link href="http://netdna.bootstrapcdn.com/font-awesome/4.0.3/css/font-awesome.min.css" rel="stylesheet" />
+    </head>
+    <body data-ng-cloak>
+      <div data-ng-controller="NavCtrl" class="navbar">
+        <div class="navbar-inner">
+          <div class="container-fluid">
+            <ul class="nav nav-tabs">
+              <li data-access-level="accessLevels.anon" active-nav><a href="login">Log in</a></li>
+              <li data-access-level="accessLevels.anon" active-nav><a href="register">Register</a></li>
+              <li data-access-level="accessLevels.user" active-nav><a href="index.html">Home</a></li>
+              <li data-access-level="accessLevels.user" active-nav="nestedTop"><a href="private">Private</a></li>
+              <li data-access-level="accessLevels.admin" active-nav><a href="admin">Admin</a></li>
+              <li data-access-level="accessLevels.user"><a href="index.html" data-ng-click="logout()">Log out</a></li>
+              <div id="userInfo" data-access-level="accessLevels.user" class="pull-right">
+                Welcome&nbsp;<strong>{{ user.username }}&nbsp;</strong><span data-ng-class="{&quot;label-info&quot;: user.role.title == userRoles.user.title, &quot;label-success&quot;: user.role.title == userRoles.admin.title}"
+                class="label">{{ user.role.title }}</span>
+              </div>
+            </ul>
+          </div>
+        </div>
+      </div>
+      <div data-ui-view class="container">
+      </div>
+      <div id="alertBox" data-ng-show="error" class="alert alert-danger">
+        <button type="button" data-ng-click="error = null;" class="close">&times;</button><strong>Oh no!&nbsp;</strong><span data-ng-bind="error"></span>
+      </div>
+      <script src="http://cdnjs.cloudflare.com/ajax/libs/underscore.js/1.4.4/underscore-min.js"></script>
+      <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.2.5/angular.min.js"></script>
+      <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.2.5/angular-cookies.min.js"></script>
+      <script src="components/angular-ui-router/release/angular-ui-router.min.js"></script>
+      <script src="js/routingConfig.js"></script>
+      <script src="js/app.js"></script>
+      <script src="js/services.js"></script>
+      <script src="js/controllers.js"></script>
+      <script src="js/filters.js"></script>
+      <script src="js/directives.js"></script>
+      <!-- Partial views... Load up front to make transitions smoother-->
+      <script type="text/ng-template" id="404"><h1>404</h1><p>Ain't nothing here</p></script>
+      <script type="text/ng-template" id="admin"><h1>Admin</h1><p>This view is visible to users with the administrator role.</p><table data-ng-hide="loading" class="table table-striped"><thead><tr><th>#</th><th>Username</th><th>Role</th></tr></thead><tbody><tr data-ng-repeat="user in users"><td>{{ user.id }}</td><td><i data-ng-show="user.provider == 'twitter'" class="fa fa-twitter"></i><i data-ng-show="user.provider == 'facebook'" class="fa fa-facebook-square"></i><i data-ng-show="user.provider == 'google'" class="fa fa-google-plus-square"></i><i data-ng-show="user.provider == 'linkedin'" class="fa fa-linkedin"></i> {{ user.username }}</td><td><span data-ng-class="{&quot;label-info&quot;: user.role.title == userRoles.user.title, &quot;label-success&quot;: user.role.title == userRoles.admin.title}" class="label">{{ user.role.title }}</span></td></tr></tbody></table></script>
+      <script type="text/ng-template" id="home"><h1>Hello</h1><p>This view is visible to logged in users.</p></script>
+      <script type="text/ng-template" id="login"><h1>Log in</h1><p>This site is an example of how one can implement role based authentication in Angular applications as outlined in<a href="http://www.frederiknakstad.com/authentication-in-single-page-applications-with-angular-js/"> this blogpost</a>. All the code can be found in<a href="https://github.com/fnakstad/angular-client-side-auth"> this GitHub repository</a>. You can either register a new user, log in with one of the two predefined users...</p><ul><li>admin/123</li><li>user/123</li></ul><hr><form ng-submit="login()" name="loginForm" role="form" class="form-horizontal"><div class="form-group"><label for="username" class="control-label col-sm-2">Username</label><div class="col-sm-10"><input type="text" data-ng-model="username" placeholder="Username" name="username" required autofocus class="form-control"></div></div><div class="form-group"><label for="password" class="control-label col-sm-2">Password</label><div class="col-sm-10"><input type="password" data-ng-model="password" placeholder="Password" name="password" required class="form-control"></div></div><div class="form-group"><div class="col-sm-offset-2 col-sm-10"><div class="checkbox"><label for="rememberme" class="checkbox"><input type="checkbox" data-ng-model="rememberme" name="rememberme">Remember me</label></div></div></div><div class="form-group"><div class="col-sm-offset-2 col-sm-10"><button type="submit" data-ng-disabled="loginForm.$invalid" class="btn btn-default">Log in</button></div></div></form><hr><p>... or use one of them fancy social logins:</p><div class="btn-group"><a href="index.html" data-ng-click="loginOauth('facebook')" class="btn btn-default"><i class="fa fa-facebook-square"></i> Facebook</a><a href="index.html" data-ng-click="loginOauth('twitter')" class="btn btn-default"><i class="fa fa-twitter"></i> Twitter</a><a href="index.html" data-ng-click="loginOauth('google')" class="btn btn-default"><i class="fa fa-google-plus-square"></i> Google</a><a href="index.html" data-ng-click="loginOauth('linkedin')" class="btn btn-default"><i class="fa fa-linkedin"></i> LinkedIn</a></div></script>
+      <script type="text/ng-template" id="private/layout"><div class="container"><div class="row"><div class="col-md-4 col-md-push-6"><div data-ng-controller="NavCtrl" class="list-group"><div class="list-group-item"><strong>Nested menu</strong></div><a href="private" active-nav class="list-group-item">Nested view</a><a href="private/nested" active-nav class="list-group-item">Another nested view</a><a href="private/admin" active-nav data-access-level="accessLevels.admin" class="list-group-item">A nested admin view</a></div></div><div data-ui-view class="col-md-6 col-md-pull-4"></div></div></div></script>
+      <script type="text/ng-template" id="private/home"><h1>Private view</h1><p>This nested view is visible to logged in users</p></script>
+      <script type="text/ng-template" id="private/nested"><h1>Private view</h1><p>This other nested view is also visible to logged in users</p></script>
+      <script type="text/ng-template" id="private/nestedAdmin"><h1>Private view</h1><p>This nested view is only available to&nbsp;<span class="label label-success">admin</span>&nbsp;users</p></script>
+      <script type="text/ng-template" id="register"><h1>Register</h1><form ng-submit="register()" name="registerForm" role="form" class="form-horizontal"><div class="form-group"><label for="username" class="control-label col-sm-2">Username</label><div class="col-sm-10"><input type="text" data-ng-model="username" placeholder="Username" name="username" required data-ng-minlength="1" data-ng-maxlength="20" autofocus class="form-control"></div></div><div class="form-group"><label for="password" class="control-label col-sm-2">Password</label><div class="col-sm-10"><input type="password" data-ng-model="password" placeholder="Password" name="password" required data-ng-minlength="5" data-ng-maxlength="60" class="form-control"></div></div><div class="form-group"><div class="radio radio-inline"><label><input type="radio" name="role" data-ng-model="role" id="adminRole" data-ng-value="userRoles.admin">Administrator</label></div><div class="radio radio-inline"><label><input type="radio" name="role" data-ng-model="role" id="adminRole" data-ng-value="userRoles.user">Normal user</label></div></div><div class="form-group"><div class="controls"><button type="submit" data-ng-disabled="registerForm.$invalid" class="btn">Submit</button></div></div><div ng-show="registerForm.$invalid &amp;&amp; registerForm.$dirty" class="alert alert-danger"><strong>Please correct the following errors:</strong><ul><li ng-show="registerForm.username.$error.required">Username is required</li><li ng-show="registerForm.username.$error.minlength">Username has to be at least 1 character long</li><li ng-show="registerForm.username.$error.maxlength">Username has to be at most 20 character long</li><li ng-show="registerForm.password.$error.required">Password is required</li><li ng-show="registerForm.password.$error.minlength">Password must be at least 5 characters long</li><li ng-show="registerForm.password.$error.maxlength">Password must be at most 60 characters long</li></ul></div></form></script>
+    </body>
+  </html>
